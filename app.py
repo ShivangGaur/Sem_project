@@ -143,7 +143,12 @@ def user_input(user_question):
     
 
 def main():
-    st.set_page_config("Chat PDF")
+    st.set_page_config(
+    page_title="Ex-stream-ly Cool App",
+    page_icon="🧊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+    )
     st.header("Chat with PDF using Gemini💁")
 
     user_question = st.text_input("Ask a Question from the PDF Files")
