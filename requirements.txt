@@ -1,0 +1,14 @@
+streamlit
+langchain
+huggingface_hub
+openai
+transformers
+google-generativeai
+python-dotenv
+torch
+PyPDF2
+chromadb
+faiss-cpu
+langchain_google_genai
+nltk
+tensorflow
