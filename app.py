@@ -143,7 +143,6 @@ def user_input(user_question):
     
 
 def main():
-    st.image("https://images.app.goo.gl/v6naCB9M3Kh29dKC9", width=100)
     st.set_page_config("Chat PDF")
     st.header("Chat with PDF using Gemini💁")
 
