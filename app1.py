@@ -210,10 +210,15 @@ def main():
                         pdf_text += page_text
                 st.success("Done")
     # Display messages
-    user_question = st.text_input("Ask a Question from the PDF Files")
+    
     for message in messages:
         if message["sender"] == "User":
             st.markdown('<div class="message-container"><div class="user-message"><img src="https://image.flaticon.com/icons/png/512/747/747376.png" class="avatar">' + message["message"] + '</div></div>', unsafe_allow_html=True)
+            user_question = st.text_input("Ask a Question from the PDF Files")
+            
+
+        else:
+            st.markdown('<div class="message-container"><div class="bot-message"><img src="https://image.flaticon.com/icons/png/512/747/747376.png" class="avatar">' + message["message"] + '</div></div>', unsafe_allow_html=True)
             if user_question!='Summary' and user_question!='summary':
                 st.chat_input(placeholder="Your message", key=None, max_chars=None, disabled=False, on_submit=None, args=None, kwargs=None)
 
@@ -223,9 +228,6 @@ def main():
                     summary_1 = summarize_long_pdf(pdf_text)
                     # else:
                     summary_2 = summarize_short_pdf(pdf_text)
-
-            else:
-                st.markdown('<div class="message-container"><div class="bot-message"><img src="https://image.flaticon.com/icons/png/512/747/747376.png" class="avatar">' + message["message"] + '</div></div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
