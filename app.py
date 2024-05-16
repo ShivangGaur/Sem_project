@@ -170,8 +170,7 @@ def main():
                 st.success("Done")
     
     if user_question!='Summary' and user_question!='summary':
-        st.chat_input(placeholder="Your message", key=None, max_chars=None, disabled=False, on_submit=None, args=None, kwargs=None)
-
+        user_input(user_question)
     
     elif user_question=='Summary' or user_question=='summary':
         with st.spinner("Summarizing text..."):
