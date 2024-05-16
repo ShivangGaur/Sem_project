@@ -1,11 +1,24 @@
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext
-from telegram.ext import filters
+import streamlit as st
+import streamlit as st
 import os
 from PyPDF2 import PdfReader
-from langchain_google_genai import ChatGoogleGenerativeAI
-from dotenv import load_dotenv
+from transformers import pipeline
+import torch
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+import os
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import google.generativeai as genai
+from langchain.vectorstores import FAISS
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.chains.question_answering import load_qa_chain
+from langchain.prompts import PromptTemplate
+from langchain.chains.summarize import load_summarize_chain
+from dotenv import load_dotenv
+import tensorflow
+
+
+from langchain.chains import LLMChain
+from langchain import PromptTemplate
 
 load_dotenv()
 os.getenv("GOOGLE_API_KEY")
@@ -34,46 +47,185 @@ def read_pdf(uploaded_file):
 
     return text
 
+def get_text_chunks(text):
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
+    chunks = text_splitter.split_text(text)
+    return chunks
+
+
+def get_vector_store(text_chunks):
+    embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
+    vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+    vector_store.save_local("faiss_index")
+
+
+def get_conversational_chain():
+
+    prompt_template = """
+    Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
+    provided context just say, "answer is not available in the context", don't provide the wrong answer\n\n
+    Context:\n {context}?\n
+    Question: \n{question}\n
+
+    Answer:
+    """
+
+    model = ChatGoogleGenerativeAI(model="gemini-pro",
+                             temperature=0.3)
+
+    prompt = PromptTemplate(template = prompt_template, input_variables = ["context", "question"])
+    chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
+
+    return chain
+
+# def count_words_in_pdf():
+#     # upload the file
+#     pdf_docs =  st.file_uploader("Upload a PDF file", type=["pdf"])
+#     # Initialize word count
+#     word_count = 0
+
+#     # Iterate through each page of the PDF
+#     for page_number in range(len(uploaded_file)):
+#         # Get the text of the page
+#         page_text = uploaded_file[page_number].get_text()
+        
+#         # Split the text into words and update the word count
+#         word_count += len(page_text.split())
+
+#     # Close the PDF document
+#     uploaded_file.close()
+
+#     return word_count
+
 def summarize_long_pdf(text):
     llm = ChatGoogleGenerativeAI(temperature=0.3, model="gemini-pro")
-    summary = llm(text)
+
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=20)
+    chunks = text_splitter.create_documents([text])
+
+    chain = load_summarize_chain(
+        llm,
+        chain_type='map_reduce',
+        verbose=False
+    )
+    summary = chain.run(chunks)
     return summary
 
-def echo(update: Update, context: CallbackContext) -> None:
-    # Get the user's message
-    user_message = update.message.text
+def summarize_short_pdf(text):
+    generic_template = '''
+    Write a summary of the following pdf_docs:
+    Speech : `{pdf_docs}`
+    .
+    '''
+    prompt = PromptTemplate(input_variables=['pdf_docs'], template=generic_template)
+    complete_prompt = prompt.format(pdf_docs=text)
 
-    if user_message.startswith("/pdf_summary"):
-        # Process PDF summary request
-        pdf_file = context.user_data.get("pdf_file")
-        if pdf_file:
-            pdf_text = read_pdf(pdf_file)
-            summary = summarize_long_pdf(pdf_text)
-            update.message.reply_text(summary)
-        else:
-            update.message.reply_text("Please upload a PDF file first.")
-    else:
-        # Echo the user's message back
-        update.message.reply_text("You said: " + user_message)
+    llm = ChatGoogleGenerativeAI(model="gemini-pro")
+    llm_chain = LLMChain(llm=llm, prompt=prompt)
+    summary = llm_chain.run({'pdf_docs': text})
+    return summary
 
-def main() -> None:
-    # Create the Updater and pass it your bot's token
-    updater = Updater(tokens="6911636949:AAHhxaA95X88Oa8KfMaBV5OUD9WQKABAtOs",use_context=True)
+def user_input(user_question):
+    embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
+    
+    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
+    docs = new_db.similarity_search(user_question)
 
-    # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
+    chain = get_conversational_chain()
 
-    # Register command handler for /pdf_summary command
-    dispatcher.add_handler(CommandHandler("pdf_summary", echo))
+    
+    response = chain(
+        {"input_documents":docs, "question": user_question}
+        , return_only_outputs=True)
 
-    # Register a message handler for regular text messages
-    dispatcher.add_handler(MessageHandler(filters.text & ~filters.command, echo))
+    print(response)
+    st.write("Reply: ", response["output_text"])
 
-    # Start the Bot
-    updater.start_polling()
+def main():
+    st.title("Chat Messaging Application")
+    st.markdown("""
+    <style>
+    .st-eb {
+        background-color: #f0f0f0 !important;
+        border-radius: 15px !important;
+        margin-bottom: 10px !important;
+    }
+    .st-ec {
+        border: none !important;
+    }
+    .user-message {
+        text-align: right !important;
+        margin-left: 5%;
+        background-color: #DCF8C6 !important;
+        border-radius: 15px 15px 0px 15px !important;
+        margin-bottom: 15px !important;
+    }
+    .bot-message {
+        text-align: left !important;
+        margin-right: 5%;
+        background-color: #D9E6F5 !important;
+        border-radius: 15px 15px 15px 0px !important;
+        margin-bottom: 15px !important;
+    }
+    .message-container {
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        max-height: 50%;
+    }
+    .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Sidebar for user input
+    
 
-    # Run the bot until you press Ctrl-C
-    updater.idle()
+    # Main content area for displaying messages
+    messages = [
+        {"sender": "User", "message": "Hi there!"},
+        {"sender": "Bot", "message": "Hello! How can I assist you today?"},
+        {"sender": "User", "message": "I need help with something."},
+        {"sender": "Bot", "message": "Sure, what do you need help with?"},
+        {"sender": "User", "message": "Can you provide information on Streamlit?"},
+        {"sender": "Bot", "message": "Of course! Streamlit is a powerful Python library for creating web applications."},
+    ]
+    with st.sidebar:
+        st.title("Menu:")
+        pdf_docs =  st.file_uploader("Upload a PDF file", type=["pdf"])
+        if st.button("Submit & Process"):
+            with st.spinner("Processing..."):
+                raw_text = read_pdf(pdf_docs)
+                text_chunks = get_text_chunks(raw_text)
+                get_vector_store(text_chunks)
+                pdf_reader = PdfReader(pdf_docs)
+                pdf_text=""
+                for page in pdf_reader.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        pdf_text += page_text
+                st.success("Done")
+    # Display messages
+    user_question = st.text_input("Ask a Question from the PDF Files")
+    for message in messages:
+        if message["sender"] == "User":
+            st.markdown('<div class="message-container"><div class="user-message"><img src="https://image.flaticon.com/icons/png/512/747/747376.png" class="avatar">' + message["message"] + '</div></div>', unsafe_allow_html=True)
+            if user_question!='Summary' and user_question!='summary':
+                st.chat_input(placeholder="Your message", key=None, max_chars=None, disabled=False, on_submit=None, args=None, kwargs=None)
 
-if __name__ == '__main__':
+            elif user_question=='Summary' or user_question=='summary':
+                with st.spinner("Summarizing text..."):
+                    # if count_words_in_pdf() > 3000:
+                    summary_1 = summarize_long_pdf(pdf_text)
+                    # else:
+                    summary_2 = summarize_short_pdf(pdf_text)
+
+            else:
+                st.markdown('<div class="message-container"><div class="bot-message"><img src="https://image.flaticon.com/icons/png/512/747/747376.png" class="avatar">' + message["message"] + '</div></div>', unsafe_allow_html=True)
+
+if __name__ == "__main__":
     main()
