@@ -212,8 +212,7 @@ def main():
     for message in messages:
         if message["sender"] == "User":
             st.text_area("You:", value=message["message"], height=100, key=message["message"])
-            if message["message"].lower() not in ["summary", "summarize"]:
-                st.chat_input(placeholder="Your message")
+            
         else:
             if message["message"] == "Summary" or message["message"] == "summary":
                 with st.spinner("Summarizing text..."):
