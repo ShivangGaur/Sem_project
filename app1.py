@@ -213,19 +213,18 @@ def main():
     
     for message in messages:
         if message["sender"] == "User":
-            st.text_area("You:", value=message["message"], height=100, key=message["message"])
+            user_question=st.chat_input(placeholder="Your message",on_submit= None,args = None, kwargs = None)
             if message["message"] not in ["summary", "summarize"]:
-                st.chat_input(placeholder="Your message")
                 user_input(user_question)
-        else:
-            if message["User"] == "Summary" or message["message"] == "summary":
-                with st.spinner("Summarizing text..."):
-                    # Call your summarization function here
-                    # summary = summarize_text(pdf_text)
-                    st.write("Here's the summary...")
-                    st.write(summarize_short_pdf(pdf_text))
+
             else:
-                st.text_area("Bot:", value=message["message"], height=100, key=message["message"])
+                if message["User"] == "Summary" or message["message"] == "summary":
+                    with st.spinner("Summarizing text..."):
+                        # Call your summarization function here
+                        # summary = summarize_text(pdf_text)
+                        st.write("Here's the summary...")
+                        st.write(summarize_short_pdf(pdf_text))
+            
 
 
 if __name__ == "__main__":
