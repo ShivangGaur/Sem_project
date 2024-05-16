@@ -211,7 +211,7 @@ def main():
         if message["sender"] == "User":
             user_question=st.chat_input(placeholder="Your message",on_submit= None,args = None, kwargs = None, disabled=False)
             if user_question not in ["summary", "summarize","Summary"]:
-                print("hello")
+                st.write("hello")
                 user_input(user_question)
 
             else:
