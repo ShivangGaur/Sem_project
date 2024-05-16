@@ -189,10 +189,8 @@ def main():
     messages = [
         {"sender": "User", "message": "Hi there!"},
         {"sender": "Bot", "message": "Hello! How can I assist you today?"},
-        {"sender": "User", "message": "I need help with something."},
-        {"sender": "Bot", "message": "Sure, what do you need help with?"},
-        {"sender": "User", "message": "Can you provide information on Streamlit?"},
-        {"sender": "Bot", "message": "Of course! Streamlit is a powerful Python library for creating web applications."},
+        {"sender": "User", "message": user_input},
+        {"sender": "Bot", "message": bot_response},
     ]
     with st.sidebar:
         st.title("Menu:")
@@ -214,15 +212,15 @@ def main():
     for message in messages:
         if message["sender"] == "User":
             st.markdown('<div class="message-container"><div class="user-message"><img src="https://image.flaticon.com/icons/png/512/747/747376.png" class="avatar">' + message["message"] + '</div></div>', unsafe_allow_html=True)
-            user_question = st.text_input("Ask a Question from the PDF Files")
+            
             
 
         else:
             st.markdown('<div class="message-container"><div class="bot-message"><img src="https://image.flaticon.com/icons/png/512/747/747376.png" class="avatar">' + message["message"] + '</div></div>', unsafe_allow_html=True)
-            if user_question!='Summary' and user_question!='summary':
+            if message["User"]!='Summary' and message["User"]!='summary':
                 st.chat_input(placeholder="Your message", key=None, max_chars=None, disabled=False, on_submit=None, args=None, kwargs=None)
 
-            elif user_question=='Summary' or user_question=='summary':
+            elif message["User"]=='Summary' or message["User"]=='summary':
                 with st.spinner("Summarizing text..."):
                     # if count_words_in_pdf() > 3000:
                     summary_1 = summarize_long_pdf(pdf_text)
