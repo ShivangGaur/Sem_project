@@ -186,10 +186,6 @@ def main():
     
     user_question = st.text_area("Ask a Question from the PDF Files")
     # Main content area for displaying messages
-    messages = [
-        {"sender": "User", "message": "Hi there!"},
-        {"sender": "Bot", "message": "Hello! How can I assist you today?"},
-    ]
     
     with st.sidebar:
         st.title("Menu:")
@@ -213,7 +209,7 @@ def main():
     
     for message in messages:
         if message["sender"] == "User":
-            user_question=st.chat_input(placeholder="Your message",on_submit= None,args = None, kwargs = None)
+            user_question=st.chat_input(placeholder="Your message",on_submit= None,args = None, kwargs = None, disabled=True)
             if user_question not in ["summary", "summarize","Summary"]:
                 user_input(user_question)
 
