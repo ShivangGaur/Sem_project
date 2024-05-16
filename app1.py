@@ -214,7 +214,7 @@ def main():
             st.text_area("You:", value=message["message"], height=100, key=message["message"])
             
         else:
-            if message["message"] == "Summary" or message["message"] == "summary":
+            if message["sender"] == "Summary" or message["sender"] == "summary":
                 with st.spinner("Summarizing text..."):
                     # Call your summarization function here
                     # summary = summarize_text(pdf_text)
