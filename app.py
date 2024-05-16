@@ -170,7 +170,7 @@ def main():
                 st.success("Done")
     
     if user_question!='Summary' and user_question!='summary':
-        st.chat_input(placeholder="Your message", *, key=None, max_chars=None, disabled=False, on_submit=None, args=None, kwargs=None)
+        st.chat_input(placeholder="Your message", key=None, max_chars=None, disabled=False, on_submit=None, args=None, kwargs=None)
 
     
     elif user_question=='Summary' or user_question=='summary':
