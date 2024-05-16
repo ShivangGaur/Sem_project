@@ -184,14 +184,13 @@ def main():
     
     bot_response = ""
     
-
+    user_question = st.text_area("Ask a Question from the PDF Files")
     # Main content area for displaying messages
     messages = [
         {"sender": "User", "message": "Hi there!"},
         {"sender": "Bot", "message": "Hello! How can I assist you today?"},
-        {"sender": "User", "message": user_input},
-        {"sender": "Bot", "message": bot_response},
     ]
+    
     with st.sidebar:
         st.title("Menu:")
         pdf_docs =  st.file_uploader("Upload a PDF file", type=["pdf"])
@@ -208,13 +207,18 @@ def main():
                         pdf_text += page_text
                 st.success("Done")
     # Display messages
+    messages = [
+        {"sender": "User", "message": user_question},
+    ]
     
     for message in messages:
         if message["sender"] == "User":
             st.text_area("You:", value=message["message"], height=100, key=message["message"])
-            
+            if message["message"] not in ["summary", "summarize"]:
+                st.chat_input(placeholder="Your message")
+                user_input(user_question)
         else:
-            if message["sender"] == "Summary" or message["sender"] == "summary":
+            if message["User"] == "Summary" or message["message"] == "summary":
                 with st.spinner("Summarizing text..."):
                     # Call your summarization function here
                     # summary = summarize_text(pdf_text)
