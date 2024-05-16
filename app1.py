@@ -182,7 +182,7 @@ def main():
     </style>
     """, unsafe_allow_html=True)
     
-    # Sidebar for user input
+    bot_response = ""
     
 
     # Main content area for displaying messages
