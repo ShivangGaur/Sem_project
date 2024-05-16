@@ -220,7 +220,8 @@ def main():
                         # Call your summarization function here
                         # summary = summarize_text(pdf_text)
                         st.write("Here's the summary...")
-                        st.write(summarize_short_pdf(pdf_text))
+                        summary = summarize_short_pdf(pdf_text)
+                        st.write(summary)
             
 
 
