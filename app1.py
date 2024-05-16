@@ -211,21 +211,19 @@ def main():
     
     for message in messages:
         if message["sender"] == "User":
-            st.markdown('<div class="message-container"><div class="user-message"><img src="https://image.flaticon.com/icons/png/512/747/747376.png" class="avatar">' + message["message"] + '</div></div>', unsafe_allow_html=True)
-            
-            
-
+            st.text_area("You:", value=message["message"], height=100, key=message["message"], class_='user-message')
+            if message["message"].lower() not in ["summary", "summarize"]:
+                st.chat_input(placeholder="Your message")
         else:
-            st.markdown('<div class="message-container"><div class="bot-message"><img src="https://image.flaticon.com/icons/png/512/747/747376.png" class="avatar">' + message["message"] + '</div></div>', unsafe_allow_html=True)
-            if message["User"]!='Summary' and message["User"]!='summary':
-                st.chat_input(placeholder="Your message", key=None, max_chars=None, disabled=False, on_submit=None, args=None, kwargs=None)
-
-            elif message["User"]=='Summary' or message["User"]=='summary':
+            if message["message"] == "Summary" or message["message"] == "summary":
                 with st.spinner("Summarizing text..."):
-                    # if count_words_in_pdf() > 3000:
-                    summary_1 = summarize_long_pdf(pdf_text)
-                    # else:
-                    summary_2 = summarize_short_pdf(pdf_text)
+                    # Call your summarization function here
+                    # summary = summarize_text(pdf_text)
+                    st.write("Here's the summary...")
+                    st.write(summarize_short_pdf(pdf_text))
+            else:
+                st.text_area("Bot:", value=message["message"], height=100, key=message["message"], class_='bot-message')
+
 
 if __name__ == "__main__":
     main()
