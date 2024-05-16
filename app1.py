@@ -211,7 +211,7 @@ def main():
     
     for message in messages:
         if message["sender"] == "User":
-            st.text_area("You:", value=message["message"], height=100, key=message["message"], class_='user-message')
+            st.text_area("You:", value=message["message"], height=100, key=message["message"])
             if message["message"].lower() not in ["summary", "summarize"]:
                 st.chat_input(placeholder="Your message")
         else:
@@ -222,7 +222,7 @@ def main():
                     st.write("Here's the summary...")
                     st.write(summarize_short_pdf(pdf_text))
             else:
-                st.text_area("Bot:", value=message["message"], height=100, key=message["message"], class_='bot-message')
+                st.text_area("Bot:", value=message["message"], height=100, key=message["message"])
 
 
 if __name__ == "__main__":
