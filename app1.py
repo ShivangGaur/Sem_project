@@ -214,11 +214,11 @@ def main():
     for message in messages:
         if message["sender"] == "User":
             user_question=st.chat_input(placeholder="Your message",on_submit= None,args = None, kwargs = None)
-            if message["message"] not in ["summary", "summarize"]:
+            if user_question not in ["summary", "summarize","Summary"]:
                 user_input(user_question)
 
             else:
-                if message["User"] == "Summary" or message["message"] == "summary":
+                if user_question == "Summary" or user_question == "summary":
                     with st.spinner("Summarizing text..."):
                         # Call your summarization function here
                         # summary = summarize_text(pdf_text)
