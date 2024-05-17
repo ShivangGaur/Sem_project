@@ -1,4 +1,5 @@
 streamlit
+streamlit-chat
 langchain
 huggingface_hub
 openai
