@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit as st
 import os
 from PyPDF2 import PdfReader
 from transformers import pipeline
@@ -225,9 +224,9 @@ def main():
 
             st.session_state.messages.append({"sender": "Bot_response", "text": answer})
 
-    for msg in st.session_state.messages:
-        st.write("Hello")
-        message(msg["text"], is_user=(msg["sender"] == "User"))
+    # for msg in st.session_state.messages:
+    #     st.write("Hello")
+    #     message(msg["text"], is_user=(msg["sender"] == "User"))
             
 
 
