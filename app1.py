@@ -212,7 +212,7 @@ def main():
             user_question=st.chat_input(placeholder="Your message",on_submit= None,args = None, kwargs = None, disabled=False)
             if user_question not in ["summary", "summarize","Summary"]:
                 st.write("hello")
-                user_input(user_question)
+                messages[user_input(user_question)]
 
             else:
                 if user_question == "Summary" or user_question == "summary":
@@ -221,7 +221,7 @@ def main():
                         # summary = summarize_text(pdf_text)
                         st.write("Here's the summary...")
                         summary = summarize_short_pdf(pdf_text)
-                        st.write(summary)
+                        messages[summary]
             
 
 
