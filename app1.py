@@ -222,6 +222,9 @@ def main():
                         st.write("Here's the summary...")
                         summary = summarize_short_pdf(pdf_text)
                         messages[summary]
+
+    for message in messages:
+        st.write(f"{message['sender']}: {message['message']}")
             
 
 
