@@ -207,15 +207,15 @@ def main():
                 st.success("Done")
                 st.session_state.pdf_text = pdf_text
     # Display messages
-    messages = [
-        {"sender": "User", "message": user_question},
-    ]
+    # messages = [
+    #     {"sender": "User", "message": user_question},
+    # ]
     
     if st.button("Send"):
         if user_question:
             st.session_state.messages.append({"sender": "User", "text": user_question})
 
-            if user_question.lower() not in ['summary', 'summarize']:
+            if user_question not in ['summary', 'summarize']:
                 answer = user_input(user_question)
             else:
                 with st.spinner("Summarizing text..."):
@@ -223,9 +223,10 @@ def main():
                     answer_short = summarize_short_pdf(st.session_state.pdf_text)
                     answer = f"Long Summary:\n{answer_long}\n\nShort Summary:\n{answer_short}"
 
-            st.session_state.messages.append({"sender": "Bot", "text": answer})
+            st.session_state.messages.append({"sender": "Bot_response", "text": answer})
 
     for msg in st.session_state.messages:
+        st.write("Hello")
         message(msg["text"], is_user=(msg["sender"] == "User"))
             
 
