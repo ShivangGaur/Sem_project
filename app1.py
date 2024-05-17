@@ -184,6 +184,8 @@ def main():
     """, unsafe_allow_html=True)
     
     bot_response = ""
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
     
     user_question = st.text_area("Ask a Question from the PDF Files")
     # Main content area for displaying messages
@@ -203,6 +205,7 @@ def main():
                     if page_text:
                         pdf_text += page_text
                 st.success("Done")
+                st.session_state.pdf_text = pdf_text
     # Display messages
     messages = [
         {"sender": "User", "message": user_question},
