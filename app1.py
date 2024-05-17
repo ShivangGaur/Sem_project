@@ -212,7 +212,7 @@ def main():
             user_question=st.chat_input(placeholder="Your message",on_submit= None,args = None, kwargs = None, disabled=False)
             if user_question not in ["summary", "summarize","Summary"]:
                 st.write("hello")
-                messages[user_input(user_question)]
+                messages["sender":"bot","message":user_input(user_question)]
 
             else:
                 if user_question == "Summary" or user_question == "summary":
