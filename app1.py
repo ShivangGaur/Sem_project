@@ -139,7 +139,7 @@ def user_input(user_question):
         , return_only_outputs=True)
 
     print(response)
-    return st.write("Reply: ", response["output_text"])
+    return response
 
 def main():
     st.title("Chat Messaging Application")
