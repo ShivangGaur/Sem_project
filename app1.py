@@ -14,6 +14,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 from langchain.chains.summarize import load_summarize_chain
 from dotenv import load_dotenv
+from streamlit_chat import message
 import tensorflow
 
 
@@ -207,24 +208,22 @@ def main():
         {"sender": "User", "message": user_question},
     ]
     
-    for message in messages:
-        if message["sender"] == "User":
-            user_question=st.chat_input(placeholder="Your message",on_submit= None,args = None, kwargs = None, disabled=False)
-            if user_question not in ["summary", "summarize","Summary"]:
-                st.write("hello")
-                messages.append["sender":"User","message":user_input(user_question)]
+    if st.button("Send"):
+        if user_question:
+            st.session_state.messages.append({"sender": "User", "text": user_question})
 
+            if user_question.lower() not in ['summary', 'summarize']:
+                answer = user_input(user_question)
             else:
-                if user_question == "Summary" or user_question == "summary":
-                    with st.spinner("Summarizing text..."):
-                        # Call your summarization function here
-                        # summary = summarize_text(pdf_text)
-                        st.write("Here's the summary...")
-                        summary = summarize_short_pdf(pdf_text)
-                        messages[summary]
+                with st.spinner("Summarizing text..."):
+                    answer_long = summarize_long_pdf(st.session_state.pdf_text)
+                    answer_short = summarize_short_pdf(st.session_state.pdf_text)
+                    answer = f"Long Summary:\n{answer_long}\n\nShort Summary:\n{answer_short}"
 
-    for message in messages:
-        st.write(f"{message['sender']}: {message['message']}")
+            st.session_state.messages.append({"sender": "Bot", "text": answer})
+
+    for msg in st.session_state.messages:
+        message(msg["text"], is_user=(msg["sender"] == "User"))
             
 
 
