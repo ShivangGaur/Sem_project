@@ -1,8 +1,7 @@
 import streamlit as st
 import os
 from PyPDF2 import PdfReader
-from transformers import pipeline
-import torch
+# from transformers import pipeline
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -14,9 +13,6 @@ from langchain.prompts import PromptTemplate
 from langchain.chains.summarize import load_summarize_chain
 from dotenv import load_dotenv
 from streamlit_chat import message
-import tensorflow
-
-
 from langchain.chains import LLMChain
 from langchain import PromptTemplate
 
@@ -189,6 +185,9 @@ def main():
     user_question = st.text_area("Ask a Question from the PDF Files")
     # Main content area for displaying messages
     
+    if "pdf_text" not in st.session_state:
+        st.session_state.pdf_text = ""
+
     with st.sidebar:
         st.title("Menu:")
         pdf_docs =  st.file_uploader("Upload a PDF file", type=["pdf"])
@@ -203,8 +202,9 @@ def main():
                     page_text = page.extract_text()
                     if page_text:
                         pdf_text += page_text
-                st.success("Done")
                 st.session_state.pdf_text = pdf_text
+                st.success("Done")
+                
     # Display messages
     # messages = [
     #     {"sender": "User", "message": user_question},
@@ -224,9 +224,9 @@ def main():
 
             st.session_state.messages.append({"sender": "Bot_response", "text": answer})
 
-    # for msg in st.session_state.messages:
-    #     st.write("Hello")
-    #     message(msg["text"], is_user=(msg["sender"] == "User"))
+    for msg in st.session_state.messages:
+        st.write("Hello")
+        message(msg["text"], is_user=(msg["sender"] == "User"))
             
 
 
