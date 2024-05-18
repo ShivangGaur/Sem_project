@@ -7,7 +7,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import google.generativeai as genai
-from langchain.vectorstores import FAISS
+from langchain.vectorstores import faiss
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
@@ -54,7 +54,7 @@ def get_text_chunks(text):
 
 def get_vector_store(text_chunks):
     embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
-    vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+    vector_store = faiss.from_texts(text_chunks, embedding=embeddings)
     vector_store.save_local("faiss_index")
 
 
@@ -77,24 +77,24 @@ def get_conversational_chain():
 
     return chain
 
-def count_words_in_pdf():
-    # upload the file
-    pdf_docs =  st.file_uploader("Upload a PDF file", type=["pdf"])
-    # Initialize word count
-    word_count = 0
+# def count_words_in_pdf():
+#     # upload the file
+#     pdf_docs =  st.file_uploader("Upload a PDF file", type=["pdf"])
+#     # Initialize word count
+#     word_count = 0
 
-    # Iterate through each page of the PDF
-    for page_number in range(len(uploaded_file)):
-        # Get the text of the page
-        page_text = uploaded_file[page_number].get_text()
+#     # Iterate through each page of the PDF
+#     for page_number in range(len(uploaded_file)):
+#         # Get the text of the page
+#         page_text = uploaded_file[page_number].get_text()
         
-        # Split the text into words and update the word count
-        word_count += len(page_text.split())
+#         # Split the text into words and update the word count
+#         word_count += len(page_text.split())
 
-    # Close the PDF document
-    uploaded_file.close()
+#     # Close the PDF document
+#     uploaded_file.close()
 
-    return word_count
+#     return word_count
 
 def summarize_long_pdf(text):
     llm = ChatGoogleGenerativeAI(temperature=0.3, model="gemini-pro")
@@ -127,7 +127,7 @@ def summarize_short_pdf(text):
 def user_input(user_question):
     embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
     
-    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
+    new_db = faiss.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
     docs = new_db.similarity_search(user_question)
 
     chain = get_conversational_chain()
