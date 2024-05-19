@@ -59,7 +59,7 @@ def get_conversational_chain():
 
     prompt_template = """
     Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
-    provided context just say, "answer is not available in the context", don't provide the wrong answer\n\n
+    provided context then give something related to that question from the provided context, if the question is completely random just say, "answer is not available in the context", don't provide the wrong answer\n\n
     Context:\n {context}?\n
     Question: \n{question}\n
 
@@ -135,7 +135,8 @@ def user_input(user_question):
         , return_only_outputs=True)
 
     print(response)
-    return response
+    answer =  response["output_text"]
+    return answer
 
 def main():
     st.title("Chat Messaging Application")
@@ -144,30 +145,48 @@ def main():
     .st-eb {
         background-color: #f0f0f0 !important;
         border-radius: 15px !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 20px !important;
+        max-height: 50% !important;
     }
     .st-ec {
         border: none !important;
+        max-height: 50% !important;s     
+                
     }
     .user-message {
         text-align: right !important;
-        margin-left: 5%;
+        display: inline-block;
+        margin-left: 15%;
         background-color: #DCF8C6 !important;
+        border: 1px solid #b2e0a1;
         border-radius: 15px 15px 0px 15px !important;
+        padding: 10px;
         margin-bottom: 15px !important;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        word-wrap: break-word;
+        float: right;
     }
     .bot-message {
         text-align: left !important;
-        margin-right: 5%;
+        display: inline-block;
+        margin-right: 15%;
         background-color: #D9E6F5 !important;
+        border: 1px solid #a8c4e4;
         border-radius: 15px 15px 15px 0px !important;
         margin-bottom: 15px !important;
+        padding: 10px;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        word-wrap: break-word;
+        float: left;
     }
     .message-container {
-        max-width: 80%;
+        max-width: auto;
         margin-left: auto;
         margin-right: auto;
         max-height: 50%;
+        overflow-y: auto;
     }
     .avatar {
         width: 30px;
@@ -179,11 +198,15 @@ def main():
     """, unsafe_allow_html=True)
     
     bot_response = ""
+
     if "messages" not in st.session_state:
         st.session_state.messages = []
     
     user_question = st.text_area("Ask a Question from the PDF Files")
     # Main content area for displaying messages
+
+    if "pdf_file" not in st.session_state:
+        st.session_state.pdf_file = None
     
     if "pdf_text" not in st.session_state:
         st.session_state.pdf_text = ""
@@ -224,9 +247,15 @@ def main():
 
             st.session_state.messages.append({"sender": "Bot_response", "text": answer})
 
-    for msg in st.session_state.messages:
-        st.write("Hello")
-        message(msg["text"], is_user=(msg["sender"] == "User"))
+    st.markdown('<div class="message-container">', unsafe_allow_html=True)
+    for i, msg in enumerate(st.session_state.messages):
+        #message(msg["text"], is_user=(msg["sender"] == "User"), key=f"msg_{i}")
+        css_class = "user-message" if msg["sender"] == "User" else "bot-message"
+        st.markdown(
+            f'<div class="{css_class}">{msg["text"]}</div>',
+            unsafe_allow_html=True
+        )
+    st.markdown('</div>', unsafe_allow_html=True)
             
 
 
