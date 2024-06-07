@@ -59,7 +59,7 @@ def get_conversational_chain():
 
     prompt_template = """
     Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
-    provided context then give something related to that question from the provided context, if the question is completely random just say, "answer is not available in the context", don't provide the wrong answer\n\n
+    provided context then do the semantic search and analyze the pdf as a scientific researcher and give something related to that question from the provided context,if the question is completely random just say, "answer is not available in the context", don't provide the wrong answer\n\n
     Context:\n {context}?\n
     Question: \n{question}\n
 
@@ -109,7 +109,7 @@ def summarize_long_pdf(text):
 
 def summarize_short_pdf(text):
     generic_template = '''
-    Write a summary of the following pdf_docs:
+    Write a detailed summary of the following pdf_docs:
     Speech : `{pdf_docs}`
     .
     '''
