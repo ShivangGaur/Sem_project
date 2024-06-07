@@ -1,8 +1,7 @@
 import streamlit as st
 import os
 from PyPDF2 import PdfReader
-from transformers import pipeline
-import torch
+# from transformers import pipeline
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -13,7 +12,6 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 from langchain.chains.summarize import load_summarize_chain
 from dotenv import load_dotenv
-import tensorflow
 
 
 from langchain.chains import LLMChain

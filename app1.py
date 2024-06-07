@@ -128,7 +128,6 @@ def user_input(user_question):
     docs = new_db.similarity_search(user_question)
 
     chain = get_conversational_chain()
-
     
     response = chain(
         {"input_documents":docs, "question": user_question}
@@ -261,3 +260,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+#12 feet ladder
